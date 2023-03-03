@@ -2,7 +2,7 @@ package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.ValidationException;
+import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
 
 import javax.validation.Valid;
@@ -32,7 +32,7 @@ public class UserController {
      * Создание пользователя
      */
     @PostMapping(value = "/users")
-    public User createUser(@Valid @RequestBody User user) throws ValidationException {
+    public User create(@Valid @RequestBody User user) {
         if (user.getLogin().contains(" ")) {
             log.warn("Ошибка валидации логина");
             throw new ValidationException("Ошибка валидации логина");
@@ -51,7 +51,7 @@ public class UserController {
      * Обновление пользователя
      */
     @PutMapping(value = "/users")
-    public User updateUser(@Valid @RequestBody User user) throws ValidationException {
+    public User update(@Valid @RequestBody User user) {
         log.debug("Пользователь к обновлению: {}", user);
         if (user.getLogin().contains(" ")) {
             log.warn("Ошибка валидации логина", user.getLogin());

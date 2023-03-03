@@ -2,7 +2,7 @@ package ru.yandex.practicum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.ValidationException;
+import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
 
 import javax.validation.Valid;
@@ -26,6 +26,7 @@ public class FilmController {
      */
     @GetMapping("/films")
     public List<Film> findAll() {
+        log.debug("Текущее количество фильмов: {}", films.size());
         return new ArrayList<>(films.values());
     }
 
@@ -33,7 +34,7 @@ public class FilmController {
      * Добавление фильма
      */
     @PostMapping(value = "/films")
-    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film add(@Valid @RequestBody Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.warn("Ошибка валидации даты релиза: {} ", film.getReleaseDate());
             throw new ValidationException("Ошибка валидации даты релиза");
@@ -48,7 +49,7 @@ public class FilmController {
      * Обновление фильма
      */
     @PutMapping(value = "/films")
-    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film update(@Valid @RequestBody Film film) {
         log.debug("Фильм к обновлению: {}", film);
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.warn("Дата релиза выходит за рамки допустимого");
