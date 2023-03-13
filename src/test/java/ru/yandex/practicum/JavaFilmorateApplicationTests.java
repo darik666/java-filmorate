@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import ru.yandex.practicum.controller.FilmController;
 import ru.yandex.practicum.controller.UserController;
+import ru.yandex.practicum.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.storage.user.InMemoryUserStorage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,10 +30,11 @@ class JavaFilmorateApplicationTests {
 
     @BeforeEach
     void setUp() {
+
         ctx = SpringApplication.run(JavaFilmorateApplication.class);
         client = HttpClient.newHttpClient();
-        filmController = new FilmController();
-        userController = new UserController();
+        filmController = new FilmController(new InMemoryFilmStorage());
+        userController = new UserController(new InMemoryUserStorage());
     }
 
     @AfterEach
