@@ -188,7 +188,7 @@ public class UserDBStorageTests {
 
         assertThat(friendList.size()).isEqualTo(1);
         assertThat(friendList.get(0)).hasFieldOrPropertyWithValue("id", 3)
-                .hasFieldOrPropertyWithValue("name", "Sarah Connor" );
+                .hasFieldOrPropertyWithValue("name", "Sarah Connor");
     }
 
     @Test
@@ -201,6 +201,6 @@ public class UserDBStorageTests {
 
         assertThat(commonFriendList.size()).isEqualTo(1);
         assertThat(commonFriendList.get(0)).hasFieldOrPropertyWithValue("id", 1)
-                .hasFieldOrPropertyWithValue("name", "Mister Abraham" );
+                .hasFieldOrPropertyWithValue("name", "Mister Abraham");
     }
 }
