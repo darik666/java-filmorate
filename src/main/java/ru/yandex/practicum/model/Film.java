@@ -28,4 +28,6 @@ public class Film {
     private Set<Integer> likes = new HashSet<>();
     private Set<Genre> genres = new TreeSet<>();
     private MPA mpa = new MPA();
+    private Set<Genre> genres = new HashSet<>();
+    private MPA mpa;
 }

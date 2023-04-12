@@ -20,7 +20,6 @@ import java.util.Map;
 @Slf4j
 @Repository("filmMemoryStorage")
 public class InMemoryFilmStorage implements FilmStorage {
-
     private final FilmService service;
     private final Map<Integer, Film> films;
     private int id = 0;
