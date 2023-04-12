@@ -12,10 +12,7 @@ import ru.yandex.practicum.model.Genre;
 import ru.yandex.practicum.model.MPA;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Хранилище фильмов Filmorate в базе данных
@@ -81,9 +78,11 @@ public class FilmDbStorage implements FilmStorage {
             film.setMpa(new MPA(mparow.getInt("MPA_ID"), mparow.getString("MPA_NAME")));
         }
         String genreQuery = "INSERT INTO FILM_GENRES(FILM_ID, GENRE_ID) VALUES (?, ?)";
+        List<Object[]> batchList = new ArrayList<>();
         for (Genre genre: film.getGenres()) {
-            jdbcTemplate.update(genreQuery, film.getId(), genre.getId());
+            batchList.add(new Object[] {film.getId(), genre.getId()});
         }
+        jdbcTemplate.batchUpdate(genreQuery, batchList);
         loadLikesAndGenres(film);
         log.debug("Фильм к сохранению: {}", film);
         return film;
@@ -121,9 +120,11 @@ public class FilmDbStorage implements FilmStorage {
         }
         jdbcTemplate.update("DELETE FROM FILM_GENRES WHERE FILM_ID = ?", film.getId());
         String genreQuery = "INSERT INTO FILM_GENRES(FILM_ID, GENRE_ID) VALUES (?, ?)";
+        List<Object[]> batchList = new ArrayList<>();
         for (Genre genre: film.getGenres()) {
-            jdbcTemplate.update(genreQuery, film.getId(), genre.getId());
+            batchList.add(new Object[] {film.getId(), genre.getId()});
         }
+        jdbcTemplate.batchUpdate(genreQuery, batchList);
         log.debug("Фильм к обновлению: {}", film);
         return loadLikesAndGenres(film);
     }
@@ -191,8 +192,14 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> findBest(Integer count) {
         log.debug("Получение {} популярных фильмов", count);
-        String sqlQuery = "SELECT F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, " +
-                "COUNT(L.FILM_ID) AS LIKES FROM FILMS F LEFT JOIN LIKES L ON F.FILM_ID = L.FILM_ID " +
+        String sqlQuery = "SELECT " +
+                "F.FILM_ID, " +
+                "F.FILM_NAME, " +
+                "F.DESCRIPTION, " +
+                "F.RELEASE_DATE, " +
+                "F.DURATION, " +
+                "COUNT(L.FILM_ID) AS LIKES " +
+                "FROM FILMS F LEFT JOIN LIKES L ON F.FILM_ID = L.FILM_ID " +
                 "GROUP BY F.FILM_ID, F.FILM_NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION " +
                 "ORDER BY LIKES DESC LIMIT " + count;
         List<Film> filmList = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {

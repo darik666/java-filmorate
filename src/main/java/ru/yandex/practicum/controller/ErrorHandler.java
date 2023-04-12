@@ -12,7 +12,7 @@ import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.ErrorResponse;
 
 /**
- * Класс обработчик исключений и ошибок
+ * Класс обработчик исключений
  */
 @Slf4j
 @RestControllerAdvice

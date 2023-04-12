@@ -27,12 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserDBStorageTests {
     private final UserStorage storage;
-    private final JdbcTemplate jdbcTemplate;
 
-    public UserDBStorageTests(@Qualifier("userDbStorage") UserStorage storage,
-                                     @Autowired JdbcTemplate jdbcTemplate) {
+    public UserDBStorageTests(@Qualifier("userDbStorage") UserStorage storage) {
         this.storage = storage;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     @BeforeEach

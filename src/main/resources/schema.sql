@@ -2,8 +2,8 @@ create table if not exists PUBLIC.FILMS
 (
     FILM_ID      INTEGER auto_increment
         primary key,
-    FILM_NAME    CHARACTER VARYING not null,
-    DESCRIPTION  CHARACTER VARYING,
+    FILM_NAME    CHARACTER VARYING(50) not null,
+    DESCRIPTION  CHARACTER VARYING(200),
     RELEASE_DATE DATE,
     DURATION     INTEGER
 );
@@ -11,7 +11,7 @@ create table if not exists PUBLIC.FILMS
 create table if not exists PUBLIC.GENRES
 (
     GENRE_ID   INTEGER           not null,
-    GENRE_NAME CHARACTER VARYING not null,
+    GENRE_NAME CHARACTER VARYING(20) not null,
     constraint "GENRE_pk"
         primary key (GENRE_ID)
 );
@@ -29,7 +29,7 @@ create table if not exists PUBLIC.FILM_GENRES
 create table if not exists PUBLIC.MPA
 (
     MPA_ID   INTEGER not null,
-    MPA_NAME CHARACTER VARYING,
+    MPA_NAME CHARACTER VARYING(10),
     constraint "MPA_pk"
         primary key (MPA_ID)
 );
@@ -47,9 +47,9 @@ create table if not exists PUBLIC.FILM_MPA
 create table if not exists PUBLIC.USERS
 (
     USER_ID    INTEGER auto_increment,
-    USER_EMAIL CHARACTER VARYING not null,
-    USER_LOGIN CHARACTER VARYING not null,
-    USER_NAME  CHARACTER VARYING,
+    USER_EMAIL CHARACTER VARYING(50) not null,
+    USER_LOGIN CHARACTER VARYING(50) not null,
+    USER_NAME  CHARACTER VARYING(50),
     BIRTHDAY   DATE,
     constraint USERS_PK
         primary key (USER_ID)

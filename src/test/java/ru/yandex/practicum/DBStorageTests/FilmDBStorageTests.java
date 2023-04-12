@@ -81,7 +81,12 @@ public class FilmDBStorageTests {
         user.setLogin("lgn");
         user.setName("nm");
         user.setBirthday(LocalDate.of(1978, 10, 10));
-        String sqlQuery = "INSERT INTO USERS(USER_ID, USER_EMAIL, USER_LOGIN, USER_NAME, BIRTHDAY) " +
+        String sqlQuery = "INSERT INTO USERS(" +
+                "USER_ID, " +
+                "USER_EMAIL, " +
+                "USER_LOGIN, " +
+                "USER_NAME, " +
+                "BIRTHDAY) " +
                 "values (?, ?, ?, ?, ?)";
         jdbcTemplate.update(sqlQuery,
                 user.getId(),
