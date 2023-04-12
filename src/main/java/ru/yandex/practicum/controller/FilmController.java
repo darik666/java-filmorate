@@ -1,9 +1,9 @@
 package ru.yandex.practicum.controller;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.Film;
-import ru.yandex.practicum.service.FilmService;
 import ru.yandex.practicum.storage.film.FilmStorage;
 
 import javax.validation.Valid;
@@ -14,10 +14,14 @@ import java.util.Optional;
  * Контроллер фильмов
  */
 @RestController
-@RequiredArgsConstructor
 public class FilmController {
+    @Qualifier("filmDbStorage")
     private final FilmStorage storage;
-    private final FilmService service;
+
+    @Autowired
+    public FilmController(@Qualifier("filmDbStorage") FilmStorage storage) {
+        this.storage = storage;
+    }
 
     /**
      * Получение всех фильмов
@@ -56,7 +60,7 @@ public class FilmController {
      */
     @PutMapping("/films/{id}/like/{userId}")
     public Film putLike(@PathVariable Integer id, @PathVariable Integer userId) {
-        return service.putLike(storage.findFilmById(id), userId);
+        return storage.putLike(storage.findFilmById(id), userId);
     }
 
     /**
@@ -64,7 +68,7 @@ public class FilmController {
      */
     @DeleteMapping("/films/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
-        return service.deleteLike(id, userId);
+        return storage.deleteLike(id, userId);
     }
 
     /**
@@ -72,6 +76,6 @@ public class FilmController {
      */
     @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(required = false) Optional<Integer> count) {
-        return service.findBest(count.orElse(10));
+        return storage.findBest(count.orElse(10));
     }
 }

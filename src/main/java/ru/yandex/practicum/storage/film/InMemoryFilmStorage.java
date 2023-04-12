@@ -2,10 +2,11 @@ package ru.yandex.practicum.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.exception.FilmNotFoundException;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.Film;
+import ru.yandex.practicum.service.FilmService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,14 +18,17 @@ import java.util.Map;
  * Хранилище фильмов Filmorate в памяти
  */
 @Slf4j
-@Component
+@Repository("filmMemoryStorage")
 public class InMemoryFilmStorage implements FilmStorage {
+
+    private final FilmService service;
     private final Map<Integer, Film> films;
     private int id = 0;
 
     @Autowired
-    public InMemoryFilmStorage() {
+    public InMemoryFilmStorage(FilmService service) {
         this.films = new HashMap<>();
+        this.service = service;
     }
 
     /**
@@ -46,6 +50,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             film.setId(++id);
             films.put(film.getId(), film);
         }
+        log.debug("Фильм к сохранению: {}", film);
         return film;
     }
 
@@ -78,5 +83,29 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.warn("Фильма с таким id не найдено");
             throw new FilmNotFoundException(String.format("Фильм № %d не найден", id));
         }
+    }
+
+    /**
+     * Установка лайка фильму
+     */
+    @Override
+    public Film putLike(Film film, Integer id) {
+        return null;
+    }
+
+    /**
+     * Удаление лайка фильма
+     */
+    @Override
+    public Film deleteLike(Integer filmId, Integer id) {
+        return service.deleteLike(findFilmById(filmId), id);
+    }
+
+    /**
+     * Получение популярных N фильмов
+     */
+    @Override
+    public List<Film> findBest(Integer count) {
+        return service.findBest(count, findAll());
     }
 }

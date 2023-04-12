@@ -1,11 +1,10 @@
 package ru.yandex.practicum.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.model.FriendStatus;
 import ru.yandex.practicum.model.User;
-import ru.yandex.practicum.storage.user.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +15,8 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage storage;
-    @Autowired
-    public UserService(UserStorage storage) {
-        this.storage = storage;
-    }
 
     /**
      * Добавление пользователя в друзья
@@ -46,9 +41,9 @@ public class UserService {
     /**
      * Получение списка друзей
      */
-    public List<User> getFriends(User user) {
+    public List<User> getFriends(User user, List<User> all) {
         List<User> friends = new ArrayList<>();
-            for (User u : storage.findAll()) {
+            for (User u : all) {
                 if (u.getFriends().keySet().contains(user.getId())) {
                     friends.add(u);
                 }

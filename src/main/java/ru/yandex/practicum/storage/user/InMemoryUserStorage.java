@@ -2,10 +2,11 @@ package ru.yandex.practicum.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.exception.ValidationException;
 import ru.yandex.practicum.model.User;
+import ru.yandex.practicum.service.UserService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,14 +16,16 @@ import java.util.List;
  * Хранилище пользователей Filmorate в памяти
  */
 @Slf4j
-@Component
+@Repository("userMemoryStorage")
 public class InMemoryUserStorage implements UserStorage {
+    private final UserService service;
     private final HashMap<Integer, User> users;
     private int id = 0;
 
     @Autowired
-    public InMemoryUserStorage() {
+    public InMemoryUserStorage(UserService service) {
         this.users = new HashMap<>();
+        this.service = service;
     }
 
     /**
@@ -80,5 +83,42 @@ public class InMemoryUserStorage implements UserStorage {
                 .filter(u -> u.getId() == (id))
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь № %d не найден", id)));
+    }
+
+    /**
+     * Добавление в друзья
+     */
+    @Override
+    public User addFriend(User user, User friend) {
+        return service.addFriend(user, friend);
+    }
+
+    /**
+     * Удаление из друзей
+     */
+    @Override
+    public User deleteFriend(User user, User friend) {
+        return service.deleteFriend(user, friend);
+    }
+
+    /**
+     * Получение всех друзей
+     */
+    @Override
+    public List<User> getFriends(User user) {
+        return service.getFriends(user, findAll());
+    }
+
+    /**
+     * Получение общих друзей
+     */
+    @Override
+    public List<User> getCommonFriends(User user1, User user2) {
+        List<Integer> commonIds = service.getCommonFriends(user1, user2);
+        List<User> commonFriends = new ArrayList<>();
+        for (Integer i : commonIds) {
+            commonFriends.add(findUserById(i));
+        }
+        return commonFriends;
     }
 }

@@ -36,10 +36,10 @@ class JavaFilmorateApplicationTests {
     void setUp() {
         ctx = SpringApplication.run(JavaFilmorateApplication.class);
         client = HttpClient.newHttpClient();
-        FilmStorage filmStorage = new InMemoryFilmStorage();
-        filmController = new FilmController(filmStorage, new FilmService(filmStorage));
-        UserStorage userStorage = new InMemoryUserStorage();
-        userController = new UserController(userStorage, new UserService(userStorage));
+        UserStorage userStorage = new InMemoryUserStorage(new UserService());
+        userController = new UserController(userStorage);
+        FilmStorage filmStorage = new InMemoryFilmStorage(new FilmService());
+        filmController = new FilmController(filmStorage);
     }
 
     @AfterEach
@@ -440,29 +440,24 @@ class JavaFilmorateApplicationTests {
         usersResponse("POST", giveUser1());
         usersResponse("POST", giveUser2());
         HttpResponse<String> response = usersResponseAdd("PUT", "/1/friends/2");
-
-        HttpResponse<String> response1 = usersResponseAdd("GET", "/1/friends");
-        JsonArray jsonArray = JsonParser.parseString(response1.body()).getAsJsonArray();
-        JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
 
         Assertions.assertEquals(200, response.statusCode());
-        Assertions.assertEquals(1, jsonArray.size());
-        Assertions.assertEquals("dolore2", jsonObject.get("login").getAsString());
-   }
+        Assertions.assertEquals(2, jsonObject.get("friends").getAsInt());
+    }
 
     @Test
     public void deleteFriendTest() {
         usersResponse("POST", giveUser1());
         usersResponse("POST", giveUser2());
-        usersResponseAdd("PUT", "/1/friends/2");
-
-        HttpResponse<String> response = usersResponseAdd("DELETE", "/1/friends/2");
-
-        HttpResponse<String> response1 = usersResponseAdd("GET", "/1/friends");
-        JsonArray jsonArray = JsonParser.parseString(response1.body()).getAsJsonArray();
+        HttpResponse<String> response = usersResponseAdd("PUT", "/1/friends/2");
 
         Assertions.assertEquals(200, response.statusCode());
-        Assertions.assertEquals(0, jsonArray.size());
+
+        response = usersResponseAdd("DELETE", "/1/friends/2");
+
+        JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
+        Assertions.assertEquals(0, jsonObject.get("friends").getAsJsonArray().size());
     }
 
     @Test

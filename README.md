@@ -1,10 +1,12 @@
 #Java-Filmorate
 
-Filmorate project 2.0
+Filmorate project 3.0
 New functions:
+- DataBase storage
 - adding and deleting friends
 - adding and deleting likes
 - getting films by rating 
+- restoring from DataBase
 
 **DataBase Visualisation**
 ![db_diagram](db_diagram.png)  
