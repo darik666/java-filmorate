@@ -2,12 +2,10 @@ package ru.yandex.practicum.DBStorageTests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.User;
@@ -51,7 +49,7 @@ public class UserDBStorageTests {
         user.setName("John Smith");
         user.setLogin("johnny");
         user.setEmail("js666@blabla.com");
-        user.setBirthday(LocalDate.of(1981, 06, 05));
+        user.setBirthday(LocalDate.of(1982, 06, 05));
         return user;
     }
 
@@ -69,11 +67,7 @@ public class UserDBStorageTests {
         User user = giveTerminator();
         user.setName(null);
         storage.create(user);
-        assertThat(user)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("id", 2)
-                .hasFieldOrPropertyWithValue("name", "terminator")
-                .hasFieldOrPropertyWithValue("email", "illbeback@boom.com");
+        assertThat(user).isNotNull().hasFieldOrPropertyWithValue("id", 2).hasFieldOrPropertyWithValue("name", "terminator").hasFieldOrPropertyWithValue("email", "illbeback@boom.com");
     }
 
     @Test
@@ -83,11 +77,7 @@ public class UserDBStorageTests {
         user.setName("Galileo");
         user.setEmail("testing@email.com");
         storage.update(user);
-        assertThat(storage.findUserById(1))
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("id", 1)
-                .hasFieldOrPropertyWithValue("name", "Galileo")
-                .hasFieldOrPropertyWithValue("email", "testing@email.com");
+        assertThat(storage.findUserById(1)).isNotNull().hasFieldOrPropertyWithValue("id", 1).hasFieldOrPropertyWithValue("name", "Galileo").hasFieldOrPropertyWithValue("email", "testing@email.com");
     }
 
     @Test
@@ -98,8 +88,7 @@ public class UserDBStorageTests {
             storage.update(user);
         });
         assertThat(thrown).isInstanceOf(UserNotFoundException.class);
-        assertThat(thrown.getMessage())
-                .isEqualTo(String.format("Пользователя с id = %d не найдено", user.getId()));
+        assertThat(thrown.getMessage()).isEqualTo(String.format("Пользователя с id = %d не найдено", user.getId()));
     }
 
     @Test
@@ -116,13 +105,7 @@ public class UserDBStorageTests {
     public void testFindUserById() {
         Optional<User> userOptional = Optional.ofNullable(storage.findUserById(1));
 
-        assertThat(userOptional)
-                .isPresent()
-                .hasValueSatisfying(user ->
-                        assertThat(user).hasFieldOrPropertyWithValue("id", 1)
-                                .hasFieldOrPropertyWithValue("name", "Mister Abraham")
-                                .hasFieldOrPropertyWithValue("email", "twisted@twist.com")
-                );
+        assertThat(userOptional).isPresent().hasValueSatisfying(user -> assertThat(user).hasFieldOrPropertyWithValue("id", 1).hasFieldOrPropertyWithValue("name", "Mister Abraham").hasFieldOrPropertyWithValue("email", "twisted@twist.com"));
     }
 
     @Test
@@ -184,8 +167,7 @@ public class UserDBStorageTests {
         List<User> friendList = storage.getFriends(user);
 
         assertThat(friendList.size()).isEqualTo(1);
-        assertThat(friendList.get(0)).hasFieldOrPropertyWithValue("id", 3)
-                .hasFieldOrPropertyWithValue("name", "Sarah Connor");
+        assertThat(friendList.get(0)).hasFieldOrPropertyWithValue("id", 3).hasFieldOrPropertyWithValue("name", "Sarah Connor");
     }
 
     @Test
@@ -197,7 +179,6 @@ public class UserDBStorageTests {
         List<User> commonFriendList = storage.getCommonFriends(storage.findAll().get(1), friend);
 
         assertThat(commonFriendList.size()).isEqualTo(1);
-        assertThat(commonFriendList.get(0)).hasFieldOrPropertyWithValue("id", 1)
-                .hasFieldOrPropertyWithValue("name", "Mister Abraham");
+        assertThat(commonFriendList.get(0)).hasFieldOrPropertyWithValue("id", 1).hasFieldOrPropertyWithValue("name", "Mister Abraham");
     }
 }
