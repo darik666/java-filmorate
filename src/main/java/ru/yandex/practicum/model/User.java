@@ -1,6 +1,7 @@
 package ru.yandex.practicum.model;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import java.util.Map;
  * Класс пользователей Filmorate
  */
 @Data
+@RequiredArgsConstructor
 public class User {
     private int id;
     @Email(message = "Please enter a valid email address")

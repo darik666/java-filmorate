@@ -1,23 +1,26 @@
 package ru.yandex.practicum.controller;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.User;
-import ru.yandex.practicum.service.UserService;
 import ru.yandex.practicum.storage.user.UserStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Контроллер пользователей
  */
 @RestController
-@RequiredArgsConstructor
 public class UserController {
+    @Qualifier("userDbStorage")
     private final UserStorage storage;
-    private final UserService service;
+
+    @Autowired
+    public UserController(@Qualifier("userDbStorage") UserStorage storage) {
+        this.storage = storage;
+    }
 
     /**
      * Получение всех пользователей
@@ -56,7 +59,7 @@ public class UserController {
      */
     @PutMapping("/users/{id}/friends/{friendId}")
     public User addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return service.addFriend(storage.findUserById(id), storage.findUserById(friendId));
+        return storage.addFriend(storage.findUserById(id), storage.findUserById(friendId));
     }
 
     /**
@@ -64,7 +67,7 @@ public class UserController {
      */
     @DeleteMapping("/users/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return service.deleteFriend(storage.findUserById(id), storage.findUserById(friendId));
+        return storage.deleteFriend(storage.findUserById(id), storage.findUserById(friendId));
     }
 
     /**
@@ -72,7 +75,7 @@ public class UserController {
      */
     @GetMapping("/users/{id}/friends")
     public List<User> getFriends(@PathVariable Integer id) {
-        return service.getFriends(storage.findUserById(id));
+        return storage.getFriends(storage.findUserById(id));
     }
 
     /**
@@ -80,12 +83,6 @@ public class UserController {
      */
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
-        List<Integer> commonIds = service.getCommonFriends(storage.findUserById(id),
-                storage.findUserById(otherId));
-        List<User> commonFriends = new ArrayList<>();
-        for (Integer i : commonIds) {
-            commonFriends.add(storage.findUserById(i));
-        }
-        return commonFriends;
+        return storage.getCommonFriends(storage.findUserById(id), storage.findUserById(otherId));
     }
 }
